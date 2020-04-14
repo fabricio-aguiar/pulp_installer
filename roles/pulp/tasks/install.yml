@@ -292,12 +292,32 @@
         virtualenv: '{{ pulp_install_dir }}'
         virtualenv_command: '{{ pulp_python_interpreter }} -m venv'
       with_dict: '{{ pulp_install_plugins }}'
-      when: item.value.source_dir is defined
+      when:
+       - item.value.source_dir is defined
+       - item.value.galaxy_wheel is undefined
       register: result
       # This is a hack. Editable pip installs are always changed, which fails molecule's
       # idempotence test.
       # Unfortunately, this will prevent the handlers from being notified.
       changed_when: result.changed and not pulp_pip_editable
+      notify:
+        - Collect static content
+        - Restart all Pulp services
+
+    - name: Install galaxy
+      pip:
+        name: '{{ item.value.galaxy_wheel }}'
+        # item.upgrade true/false -> ansible pip module latest/present ->
+        # pip command "install --upgrade"/"install"
+        state: "{{ item.value.upgrade | default(false) | ternary('latest','present','present') }}"
+        # TODO: Handle the fact that "version is incompatible with state=latest"
+        # through proper means, rather than just telling users not to set both.
+        version: '{{ item.value.version | default(omit) }}'
+        extra_args: "-c {{ pulp_install_dir }}/pip_constraints_for_plugins.txt"
+        virtualenv: '{{ pulp_install_dir }}'
+        virtualenv_command: '{{ pulp_python_interpreter }} -m venv'
+      with_dict: '{{ pulp_install_plugins }}'
+      when: pulp_install_plugins[item.key].galaxy_wheel is defined
       notify:
         - Collect static content
         - Restart all Pulp services
