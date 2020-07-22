@@ -60,6 +60,8 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python }}
+      - name: Debugging with tmate
+        uses: mxschmitt/action-tmate@v2
       - name: Install tox
         run: |
           pip install --upgrade pip
