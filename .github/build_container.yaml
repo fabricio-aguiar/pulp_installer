@@ -13,7 +13,7 @@
 
     - name: Log into DockerHub
       docker_login:
-        username: pulpbot
+        username: fao89
         password: "{{ lookup('env','DOCKER_BOT_PASSWORD') }}"
 
     - name: "Build molecule image"
