@@ -11,7 +11,7 @@ pulp_install_plugins:
   # pulp-gem: {}
   # pulp-maven: {}
   # pulp-npm: {}
-  # pulp-python: {}
+  pulp-python: {}
   pulp-rpm: {}
 pulp_settings:
   secret_key: secret
