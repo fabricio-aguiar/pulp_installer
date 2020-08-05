@@ -1,6 +1,7 @@
 ---
 pulp_default_admin_password: password
 pulp_upgrade: true
+pulp_use_system_wide_pkgs: true
 pulp_install_plugins:
   pulp-file:
     upgrade: true
