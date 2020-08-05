@@ -1,4 +1,8 @@
 ---
+- name: Running pre_flight plugin
+  debug:
+    msg: "{{ lookup('pulp.pulp_installer.pre_flight') }}"
+
 - name: Create pulp install dir
   file:
     path: '{{ pulp_install_dir }}'

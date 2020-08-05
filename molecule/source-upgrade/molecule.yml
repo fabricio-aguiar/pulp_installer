@@ -36,6 +36,8 @@ platforms:
     pre_build_image: true
 provisioner:
   name: ansible
+  env:
+    ANSIBLE_COLLECTIONS_PATHS: "~/.ansible/collections:/usr/share/ansible/collections:/tmp/ansible_collections/pulp/pulp_installer"
   config_options:
     defaults:
       stdout_callback: debug
