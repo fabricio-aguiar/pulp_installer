@@ -1,0 +1,3 @@
+---
+- name: Starting the health check
+  include_tasks: tasks/health_check.yml

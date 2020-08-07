@@ -21,6 +21,7 @@
         - pulp_resource_manager
         - pulp_workers
         - pulp_webserver
+        - pulp_health_check
       loop_control:
         loop_var: roleinputvar
   environment:

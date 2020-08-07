@@ -10,7 +10,9 @@
         group: root
         mode: 0644
       become: true
-      notify: Restart pulpcore-api.service
+      notify:
+        - Restart pulpcore-api.service
+        - Starting the health check
 
     - name: Set the pulpcore-api service state
       systemd:

@@ -75,6 +75,8 @@ jobs:
         run: |
           docker pull quay.io/pulp/pulp-ci-pkgs-c7:3.3.1
           docker pull quay.io/pulp/pulp-ci-pkgs-c8:3.3.1
+      - name: Debugging with tmate
+        uses: mxschmitt/action-tmate@v2
       - name: Run tox
         run: tox -e "py${{ matrix.toxpy }}-ansible${{ matrix.ansible }}-${{ matrix.test_type }}"
         env:

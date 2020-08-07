@@ -18,7 +18,9 @@
       template:
         src: nginx.conf.j2
         dest: /etc/nginx/nginx.conf
-      notify: reload nginx
+      notify:
+        - reload nginx
+        - Starting the health check
 
     - name: Find pulp obsolete symlinks
       find:
@@ -51,7 +53,9 @@
         state: link
       loop: '{{ snippets.results }}'
       when: item.rc == 0
-      notify: reload nginx
+      notify:
+        - reload nginx
+        - Starting the health check
 
     - name: Start and enable Nginx
       systemd:
