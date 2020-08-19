@@ -4,6 +4,11 @@ pulp_health_check
 Verify if Pulp Services are up and listening.
 Note: this role is meant to be run on the host that [pulp_api](https://pulp-installer.readthedocs.io/en/latest/roles/pulp_api/) is run against
 
+Role Variables
+--------------
+
+* `pulp_default_host`: The host to be used as default when `pulp_api_bind` is an unix socket.
+
 Shared Variables
 ----------------
 
