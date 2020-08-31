@@ -13,6 +13,17 @@
     filename: libcontainers
   when: ansible_facts.distribution == 'Debian'
 
+- name: Install cri-o-runc (Debian-specific)
+  package:
+    name:
+      - libseccomp2=2.4.1
+      - cri-o-runc
+    state: present
+  retries: "{{ pulp_devel_package_retries }}"
+  register: result
+  until: result is succeeded
+  when: ansible_facts.distribution == 'Debian'
+
 - name: Install podman, buildah, and runc
   package:
     name:
