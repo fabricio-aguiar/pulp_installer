@@ -13,11 +13,17 @@
     filename: libcontainers
   when: ansible_facts.distribution == 'Debian'
 
-- name: Install cri-o-runc (Debian-specific)
-  package:
+- name: Ensure backports repository (Debian-specific)
+  apt_repository:
+    repo: "deb http://deb.debian.org/debian buster-backports main"
+    filename: backports
+  when: ansible_facts.distribution == 'Debian'
+
+- name: Install libseccomp2 from backports (Debian-specific)
+  apt:
     name:
-      - libseccomp2=2.4.1
-      - cri-o-runc
+      - libseccomp2=2.4*
+    default_release: buster-backports
     state: present
   retries: "{{ pulp_devel_package_retries }}"
   register: result
