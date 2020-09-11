@@ -195,7 +195,7 @@
         # TODO: Handle the fact that "version is incompatible with state=latest"
         # through proper means, rather than just telling users not to set both.
         version: '{{ item.value.version | default(omit) }}'
-        extra_args: "-c {{ pulp_install_dir }}/pip_constraints_for_plugins.txt"
+        extra_args: "{{ item.value.upgrade | default(false) | ternary('--upgrade-strategy=eager', omit) }}"
         virtualenv: '{{ pulp_install_dir }}'
         virtualenv_command: '{{ pulp_python_interpreter }} -m venv'
       with_dict: '{{ pulp_install_plugins_normalized }}'
