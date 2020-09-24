@@ -51,6 +51,9 @@
     creates: /etc/containers
   when: ansible_facts.distribution == 'Debian'
 
+- debug:
+    msg: '{{ ansible_virtualization_type }}'
+
 # Needed to allow non-root users to run podman containers on Debian
 - name: Enable unprivileged_userns_clone (Debian specific)
   sysctl:
