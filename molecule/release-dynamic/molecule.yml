@@ -45,6 +45,7 @@ provisioner:
   config_options:
     defaults:
       stdout_callback: debug
+      display_args_to_stdout: yes
       callback_whitelist: profile_tasks
   inventory:
     links:
