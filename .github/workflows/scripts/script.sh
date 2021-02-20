@@ -25,7 +25,7 @@ localectl status
 
 # Workaround https://pulp.plan.io/issues/8095 until fixed.
 if [[ "$1" == *"fips" ]] ; then
-  cp .github/files/fips/requirements.yml ./requirements.yml
+  cat ./requirements.yml
 fi
 
 # This comamnd does include vagrant-sshfs getting run, and thus using epel.

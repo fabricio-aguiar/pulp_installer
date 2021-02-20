@@ -1,5 +1,7 @@
 ---
 roles:
-  - geerlingguy.postgresql
+  - name: geerlingguy.postgresql
+    src: https://github.com/fao89/ansible-role-postgresql.git
+    version: lint_scram
 collections:
   - ansible.posix

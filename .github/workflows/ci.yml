@@ -1,7 +1,7 @@
 ---
 name: Pulp CI
 on:
-  push:
+  pull_request:
     branches:
       - '*'
 jobs:
