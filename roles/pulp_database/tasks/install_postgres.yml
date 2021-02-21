@@ -1,5 +1,30 @@
 ---
 - block:
+    - name: Check if PostgreSQL < 10 is initialized.
+      stat:
+        path: "{{ postgresql_previous_data_dir }}/PG_VERSION"
+      register: previous_pgdata_dir_version
+
+    - name: Get PG_VERSION
+      command: "cat {{ postgresql_previous_data_dir }}/PG_VERSION"
+      register: pg_version
+      when: previous_pgdata_dir_version.stat.exists
+      tags:
+        - molecule-idempotence-notest
+
+    - name: Stop PostgreSQL < 10 service
+      systemd:
+        name: "{{ postgresql_previous_daemon }}"
+        state: stopped
+        enabled: no
+      register: pgservice_result
+      failed_when: "pgservice_result is failed and 'Service is in unknown state' not in pgservice_result.msg"
+      when:
+        - previous_pgdata_dir_version.stat.exists
+        - pg_version is defined
+        - pg_version.changed
+        - pg_version.stdout is version('10', '<')
+
     - name: Install SCL package
       package:
         name:
@@ -23,6 +48,34 @@
       template:
         src: templates/postgresql_scl_profile.j2
         dest: "{{ postgresql_profile_path }}"
+
+    - name: Backup previous PostgreSQL
+      copy:
+        src: "{{ postgresql_previous_data_dir }}"
+        remote_src: yes
+        dest: "{{ postgresql_data_dir.replace('data', 'backup') }}"
+      check_mode: false
+      when:
+        - previous_pgdata_dir_version.stat.exists
+        - pg_version is defined
+        - pg_version.changed
+        - pg_version.stdout is version('10', '<')
+
+    - name: Check if PostgreSQL database is initialized.
+      stat:
+        path: "{{ postgresql_data_dir }}/PG_VERSION"
+      register: pgdata_dir_version
+
+    - name: Upgrade to PostgreSQL 10
+      shell: >-
+        source scl_source enable rh-postgresql10
+        && {{ postgresql_bin_path }}/postgresql-setup --upgrade --upgrade-from=rh-postgresql96-postgresql
+      when:
+        - not pgdata_dir_version.stat.exists
+        - previous_pgdata_dir_version.stat.exists
+        - pg_version is defined
+        - pg_version.changed
+        - pg_version.stdout is version('10', '<')
 
     - name: Check if PostgreSQL database is initialized.
       stat:
