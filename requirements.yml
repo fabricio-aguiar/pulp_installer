@@ -3,3 +3,4 @@ roles:
   - geerlingguy.postgresql
 collections:
   - ansible.posix
+  - community.postgresql

@@ -1,6 +1,8 @@
 ---
 roles:
   - name: geerlingguy.postgresql
-    version: 2.2.1
+    src: https://github.com/fao89/ansible-role-postgresql.git
+    version: fips_scram_sha256
 collections:
   - ansible.posix
+  - community.postgresql
