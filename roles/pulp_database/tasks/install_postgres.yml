@@ -1,14 +1,65 @@
 ---
 - block:
+    - name: Check if PostgreSQL < 10 is initialized.
+      stat:
+        path: "{{ postgresql_previous_data_dir }}/PG_VERSION"
+      register: previous_pgdata_dir_version
+
+    - name: Get PG_VERSION
+      command: "cat {{ postgresql_previous_data_dir }}/PG_VERSION"
+      register: pg_version
+      when: previous_pgdata_dir_version.stat.exists
+      tags:
+        - molecule-idempotence-notest
+
+    - name: Stop PostgreSQL < 10 service
+      systemd:
+        name: "{{ postgresql_previous_daemon }}"
+        state: stopped
+        enabled: no
+      register: pgservice_result
+      failed_when: "pgservice_result is failed and 'Service is in unknown state' not in pgservice_result.msg"
+      when:
+        - previous_pgdata_dir_version.stat.exists
+        - pg_version is defined
+        - pg_version.stdout is version('10', '<')
+
     - name: Install PostgreSQL10 Repository
       yum_repository:
         name: postgres
         description: Postgres YUM repo
         baseurl: "https://download.postgresql.org/pub/repos/yum/10/redhat/rhel-7-{{ ansible_facts.architecture }}"
         gpgkey: https://download.postgresql.org/pub/repos/yum/RPM-GPG-KEY-PGDG-10
+
+    - name: Install PostgreSQL
+      package:
+        name: "{{ postgresql_packages }}"
+        state: present
+
+    - name: Backup previous PostgreSQL
+      copy:
+        src: "{{ postgresql_previous_data_dir }}"
+        remote_src: yes
+        dest: "{{ postgresql_data_dir.replace('data', 'backup') }}"
+      check_mode: false
       when:
-        - ansible_facts.distribution == 'CentOS'
-        - ansible_facts.distribution_major_version|int == 7
+        - previous_pgdata_dir_version.stat.exists
+        - pg_version is defined
+        - pg_version.stdout is version('10', '<')
+
+    - name: Check if PostgreSQL database is initialized.
+      stat:
+        path: "{{ postgresql_data_dir }}/PG_VERSION"
+      register: pgdata_dir_version
+
+    - name: Upgrade to PostgreSQL 10
+      shell: >-
+        {{ postgresql_bin_path }}/postgresql-setup --upgrade --upgrade-from=rh-postgresql96-postgresql
+      when:
+        - not pgdata_dir_version.stat.exists
+        - previous_pgdata_dir_version.stat.exists
+        - pg_version is defined
+        - pg_version.stdout is version('10', '<')
 
     - name: Install and configure PostgreSQL
       include_role:
@@ -20,7 +71,8 @@
         dest: "/usr/bin/pg_config"
         state: link
       check_mode: false
-      when:
+
+  become: yes
+  when:
         - ansible_facts.distribution == 'CentOS'
         - ansible_facts.distribution_major_version|int == 7
-  become: yes

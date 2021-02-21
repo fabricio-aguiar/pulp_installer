@@ -2,6 +2,7 @@
 # vars needed for 'rh-postgresql10' SCL
 postgresql_version: "10"
 postgresql_daemon: postgresql-10
+postgresql_previous_daemon: rh-postgresql96-postgresql
 postgresql_packages:
   - postgresql10
   - postgresql10-server
@@ -9,4 +10,5 @@ postgresql_packages:
   - postgresql10-contrib
 postgresql_bin_path: /usr/pgsql-10/bin
 postgresql_data_dir: /var/lib/pgsql/10/data
+postgresql_previous_data_dir: /var/opt/rh/rh-postgresql96/lib/pgsql/data
 postgresql_config_path: /var/lib/pgsql/10/data
