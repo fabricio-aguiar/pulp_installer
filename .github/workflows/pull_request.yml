@@ -1,33 +1,7 @@
 ---
 name: Pulp PR
-on: pull_request
+on: push
 jobs:
-  git-check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2.3.1
-      - run: |
-          git fetch --prune --unshallow
-      - name: Set up Python
-        uses: actions/setup-python@v2
-      - name: Install requests
-        run: pip install requests
-      - name: Check commit message
-        env:
-          GITHUB_CONTEXT: ${{ github.event.pull_request.commits_url }}
-        run: |
-          for sha in $(curl $GITHUB_CONTEXT | jq '.[].sha' | sed 's/"//g')
-          do
-            python .github/validate_commit_message.py $sha
-            VALUE=$?
-            if [ "$VALUE" -gt 0 ]; then
-              exit $VALUE
-            fi
-          done
-        shell: bash
-      - name: Check submodule status
-        run: |
-          .ci/submodule_check.sh
   molecule:
     runs-on: ubuntu-latest
     strategy:
@@ -111,6 +85,10 @@ jobs:
       - uses: actions/checkout@v2.3.1
         with:
           submodules: true
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
       - name: Install Vagrant
         shell: bash
         run: .github/workflows/scripts/install.sh ${{ matrix.test_type }}
