@@ -13,7 +13,7 @@ System Requirements
 -------------------
 
 The [control node](https://docs.ansible.com/ansible/2.5/network/getting_started/basic_concepts.html#control-node)
-must have Python 3 and Ansible (>= 2.9) installed.
+must have Python 3 and Ansible (>= 2.10) installed.
 
 The [managed node](https://docs.ansible.com/ansible/2.5/network/getting_started/basic_concepts.html#managed-nodes)
 must be one of these currently supported operating systems:

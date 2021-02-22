@@ -9,7 +9,7 @@ boxes.
 Requirements
 ------------
 
-- Ansible 2.9+
+- Ansible 2.10+
 - Vagrant 1.8+
 - Vagrant provider plugin (follow [vagrant](
   https://www.vagrantup.com/docs/providers/installation.html) instructions)

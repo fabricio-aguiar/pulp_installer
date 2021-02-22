@@ -1,0 +1,12 @@
+---
+requires_ansible: ">=2.10,<3.1"
+# https://docs.ansible.com/ansible/latest/dev_guide/developing_collections.html#meta-directory
+plugin_routing:
+  modules:
+    firewalld:
+      redirect: ansible.posix.firewalld
+  module_utils:
+    firewalld:
+      redirect: ansible.posix.firewalld
+    docker.common:
+      redirect: community.docker.common
