@@ -99,6 +99,40 @@ jobs:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
         shell: bash
+  core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.3.1
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
+      - name: Install prerequisites
+        run: |
+          pip install --upgrade pip
+          sudo apt remove ansible
+          pip install --pre ansible-core
+          pip install molecule docker molecule-docker ansible-lint[yamllint]
+          ansible-galaxy collection install --force community.general -p ./temp
+          ansible-galaxy collection install --force community.crypto -p ./temp
+          mkdir -p plugins/modules
+          cp temp/ansible_collections/community/general/plugins/modules/files/ini_file.py plugins/modules
+          cp temp/ansible_collections/community/general/plugins/modules/system/seport.py plugins/modules
+          cp temp/ansible_collections/community/crypto/plugins/modules/openssl_privatekey.py plugins/modules
+          cp temp/ansible_collections/community/crypto/plugins/modules/openssl_publickey.py plugins/modules
+          rm -rf temp
+          make install
+          sed -i "s/pulp_/pulp.pulp_installer.pulp_/g" playbooks/example-source/playbook.yml
+          mkdir -p ~/.ansible/collections/ansible_collections/pulp/pulp_installer
+          cp -r ./build/collections/ansible_collections/pulp/pulp_installer ~/.ansible/collections/ansible_collections/pulp/pulp_installer
+      - name: Molecule
+        run: |
+          ansible --version
+          molecule test --scenario-name source-static
+        env:
+          PY_COLORS: '1'
+          ANSIBLE_FORCE_COLOR: '1'
+        shell: bash
   vagrant:
     runs-on: ubuntu-20.04
     strategy:
