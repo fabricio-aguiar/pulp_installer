@@ -76,3 +76,6 @@ jobs:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
         shell: bash
+      - name: After failure - tmate
+        if: failure()
+        uses: mxschmitt/action-tmate@v3
