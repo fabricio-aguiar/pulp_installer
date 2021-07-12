@@ -69,4 +69,17 @@
     src: motd
     dest: /etc/motd
   become: true
+
+- name: SELinux Analyze
+  shell: 'sealert --analyze=/var/log/audit/audit.log | grep "SELinux is preventing"'
+  changed_when: false
+  register: selinux_analyze
+  check_mode: false
+  become: true
+  ignore_errors: true
+
+- name: SELinux status
+  debug:
+    var: selinux_analyze.stdout_lines
+  when: selinux_analyze.stdout
 ...

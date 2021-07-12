@@ -12,3 +12,5 @@ pulp_devel_distro_pkgs:
   - vim-enhanced
   - ruby-devel
   - jnettop
+  - setroubleshoot
+  - setroubleshoot-server
