@@ -1,6 +1,6 @@
 ---
 name: Pulp CI
-on: pull_request
+on: push
 jobs:
   git-check:
     runs-on: ubuntu-latest
@@ -99,6 +99,9 @@ jobs:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
         shell: bash
+      - name: After failure
+        if: failure()
+        uses: mxschmitt/action-tmate@v3.5
   core:
     runs-on: ubuntu-latest
     steps:
@@ -141,3 +144,6 @@ jobs:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
         shell: bash
+      - name: After failure
+        if: failure()
+        uses: mxschmitt/action-tmate@v3.5
